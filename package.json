@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-hw01",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masiuk-mykola/nodejs-hw01.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/masiuk-mykola/nodejs-hw01/issues"
+  },
+  "homepage": "https://github.com/masiuk-mykola/nodejs-hw01#readme",
+  "dependencies": {
+    "commander": "^9.4.1",
+    "nodemon": "^2.0.20",
+    "uuid": "^9.0.0"
+  }
+}
