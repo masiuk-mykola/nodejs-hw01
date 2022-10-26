@@ -1,64 +1,58 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 const { v4 } = require('uuid');
 
-const contactsPath = path.normalize('./db/contacts.json');
+const contactsPath = path.join(__dirname, './db/contacts.json');
 
-function listContacts() {
-  fs.readFile(contactsPath, (error, data) => {
-    if (error) {
-      console.log('error', error);
-    }
-    console.table(JSON.parse(data));
+async function listContacts() {
+  try {
+    const data = await fs.readFile(contactsPath);
     const contacts = JSON.parse(data);
     return contacts;
-  });
+  } catch (error) {
+    console.log(error.message);
+  }
 }
 
-function getContactById(contactId) {
-  fs.readFile(contactsPath, (error, data) => {
-    if (error) {
-      console.log('error', error);
-    }
-    const contacts = JSON.parse(data);
-    const contactToFind = contacts.filter(item => item.id === contactId);
-    console.table(contactToFind);
-  });
+async function getContactById(contactId) {
+  try {
+    const contacts = await listContacts();
+    const result = contacts.find(({ id }) => id === contactId);
+    return result;
+  } catch (error) {
+    console.log(error.message);
+  }
 }
 
-function removeContact(contactId) {
-  fs.readFile(contactsPath, (error, data) => {
-    if (error) {
-      console.log('error', error);
-    }
-    const contacts = JSON.parse(data);
-    const leftContacts = contacts.filter(item => item.id !== contactId);
-    const updateContacts = JSON.stringify(leftContacts);
-    fs.writeFile(contactsPath, updateContacts, error => {
-      if (error) {
-        console.log('error', error);
-      }
-      const contactToRemove = contacts.filter(item => item.id === contactId);
-      console.table(contactToRemove);
-    });
-  });
+async function removeContact(contactId) {
+  try {
+    const allContacts = await listContacts();
+    const changedCollection = allContacts.filter(({ id }) => id !== contactId);
+    updateFile(changedCollection);
+    return allContacts.filter(({ id }) => id === contactId);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-function addContact(name, email, phone) {
-  const newContact = { id: v4(), name, email, phone };
-  fs.readFile(contactsPath, (error, data) => {
-    if (error) {
-      console.log('error', error);
-    }
-    const contacts = JSON.parse(data);
-    const updateContacts = JSON.stringify([...contacts, newContact]);
-    fs.writeFile(contactsPath, updateContacts, error => {
-      if (error) {
-        console.log('error', error);
-      }
-      console.table(newContact);
-    });
-  });
+async function addContact(name, email, phone) {
+  try {
+    const newContact = { id: v4(), name: name, email: email, phone: phone };
+    const allContacts = await listContacts();
+    const changedCollection = [...allContacts, newContact];
+    updateFile(changedCollection);
+    return newContact;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function updateFile(instance) {
+  try {
+    fs.writeFile(contactsPath, JSON.stringify(instance, null, 2));
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 module.exports = {
