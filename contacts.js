@@ -28,7 +28,7 @@ async function removeContact(contactId) {
   try {
     const allContacts = await listContacts();
     const changedCollection = allContacts.filter(({ id }) => id !== contactId);
-    updateFile(changedCollection);
+    await updateFile(changedCollection);
     return allContacts.filter(({ id }) => id === contactId);
   } catch (error) {
     console.log(error);
@@ -40,7 +40,7 @@ async function addContact(name, email, phone) {
     const newContact = { id: v4(), name: name, email: email, phone: phone };
     const allContacts = await listContacts();
     const changedCollection = [...allContacts, newContact];
-    updateFile(changedCollection);
+    await updateFile(changedCollection);
     return newContact;
   } catch (error) {
     console.log(error);
@@ -49,7 +49,7 @@ async function addContact(name, email, phone) {
 
 async function updateFile(instance) {
   try {
-    fs.writeFile(contactsPath, JSON.stringify(instance, null, 2));
+    await fs.writeFile(contactsPath, JSON.stringify(instance, null, 2));
   } catch (error) {
     console.log(error);
   }
